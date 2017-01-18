@@ -1,0 +1,17 @@
+body{
+
+}
+
+button {
+  style: "padding: .5em;
+  display: inline-block;
+
+}
+
+form {
+  display: inline-block;
+}
+
+li {
+  color: black;
+}

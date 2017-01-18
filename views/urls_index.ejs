@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <link rel="stylesheet" type="text/css" href="/public/style.css">
+    <title>TinyApp</title>
+<head>
+<body>
+        <% for(url in urls){ %>
+        <li> <%= urls[url] %>  ---> <%= url %>
+          <form method  = "POST" action = "/urls/<%= url %>/delete">
+          <a href = "http://localhost:8080/urls/<%= url%>">Edit<a>
+          <button type = "submit">Delete</button></form>
+        </li>
+        <% } %>
+        <a href="http://localhost:8080/urls/new">Click Here for short link</a>
+</body>
+</html>
