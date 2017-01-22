@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="/style.css">
   <title>TinyApp</title>
+  <% include partials/_header %>
 </head>
 <body>
-    <% for(key in templateVars){ %>
-        <a href="<%= templateVars[key] %>"> <%= key %>  </a> ---> <%= templateVars[key]%>
-     <% } %>
-        <form method = "POST" action = "/urls/<%=key%>/update">
+        <a href="<%= longUrl %>"> <%= shortUrl %>  </a> ---> <%= longUrl%>
+        <form method = "POST" action = "/urls/<%=shortUrl%>/update">
           <input type = "text" name = "updatedUrl">
           <button style = "padding: .5em; display: inline-block;" type = "submit">Update</button>
         </form>
