@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 var PORT = process.env.PORT || 8080 //default Port
 
 app.set("view engine", "ejs");
-app.use("/public", express.static(__dirname+"/public"))
+app.use("/", express.static(__dirname+"/public"))
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -55,15 +55,16 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let lengthOfPasswd = 10;
-  let UserEmailAdd = req.body.email;
-  let UserPassword = bcrypt.hashSync(req.body.password, lengthOfPasswd);
-  let UserRandomId = generateRandomString();
-  if(!UserEmailAdd || !UserPassword){
+  let userEmailAdd = req.body.email;
+  let userPassword = bcrypt.hashSync(req.body.password, lengthOfPasswd);
+  let userRandomId = generateRandomString();
+  if(!userEmailAdd || !userPassword){
     res.status(400).send('Email Address or Password Missing!');
   }
-  else if(!checkUserExists(UserEmailAdd, users)){
-    users[UserEmailAdd] = {Id: UserRandomId,Email: UserEmailAdd, Password: UserPassword};
-    res.status(200).redirect('/');
+  else if(!checkUserExists(userEmailAdd, users)){
+    users[userEmailAdd] = {Id: userRandomId,email: userEmailAdd, password: userPassword};
+    req.session.userName = users[userEmailAdd].email
+    res.status(200).redirect('/urls');
   }else {
     res.status(400).send('User Already Registered')
   }
@@ -78,7 +79,7 @@ app.get("/urls", (req, res) => {
     console.log("index", templateVars);
     res.render("urls_index", templateVars);
   }else{
-    res.status(401).redirect("/login_link")
+    res.status(401).render("login_link")
   }
 });
 
@@ -92,7 +93,7 @@ app.get("/urls/new", (req, res) => {
     templateVars.loggedUser = req.session.userName
     res.status(200).render("urls_new", templateVars);
   }else{
-    res.status(401).redirect("/login_link")
+    res.status(401).render("login_link")
   }
 });
 
@@ -132,15 +133,15 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let UserLoginEmail = req.body.username;
-  let UserLoginPassword = req.body.password;
+  let userLoginEmail = req.body.username;
+  let userLoginPassword = req.body.password;
   for(key in users) {
-    if(users[key].Email === UserLoginEmail && bcrypt.compareSync(UserLoginPassword, users[key].Password)){
-      req.session.userName = users[key].Email;
+    if(users[key].email === userLoginEmail && bcrypt.compareSync(userLoginPassword, users[key].password)){
+      req.session.userName = users[key].email;
       res.redirect('/');
     }
   }
-  if(!checkUserExists(UserLoginEmail, users)){
+  if(!checkUserExists(userLoginEmail, users && !bcrypt.compareSync(userLoginPassword, users[key].password))){
     res.status(403).send("UserName or Password does not match");
   }
 });
@@ -180,7 +181,7 @@ app.get("/urls/:id", (req, res) => {
     console.log("Urls/id - urlDatabase", urlDatabase)
     res.render("urls_show", templateVars);
   }else{
-    res.status(401).res.redirect("/login_link");
+    res.status(401).render("login_link");
   }
 });
 
